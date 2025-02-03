@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D myrigid;
+    private Animator myAnimator;
     public float power = 3.0f;
     // Start is called before the first frame update
     void Start()
@@ -14,6 +15,11 @@ public class Player : MonoBehaviour
         {
             // Debug.Log("Player.cs : Rigidbody2D is Not Found.");
             Debug.Log("Player.cs에서 Player가 보유한 Rigidbody2D를 찾을 수 없었습니다.");
+        }
+        myAnimator = gameObject.GetComponent<Animator>();
+        if(myAnimator == null)
+        {
+            Debug.Log("Player.cs에서 Player가 보유한 Animator를 찾을 수 없었습니다.");
         }
     }
 
@@ -38,6 +44,18 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("Hit!");
+        // Debug.Log("Hit!"); // 제거
+        if(myAnimator) 
+            myAnimator.SetBool("isDead", true);
+        Invoke("OnDead", 1.0f);
+    }
+
+    public GameManager gameManager;
+    void OnDead()
+    {
+        if (gameManager)
+            gameManager.GameOver();
+        else
+            Debug.Log("public GameManager를 등록하지 않았습니다.");
     }
 }
