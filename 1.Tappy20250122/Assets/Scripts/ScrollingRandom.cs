@@ -28,7 +28,12 @@ public class ScrollingRandom : MonoBehaviour
             if (Random.Range(0, 2) == 0)
                 col2D.enabled = mysr.enabled = true;
             else
-                col2D.enabled = mysr.enabled = false;
+                Hide();
         }
+    }
+
+    public void Hide()
+    {
+        col2D.enabled = mysr.enabled = false;
     }
 }
