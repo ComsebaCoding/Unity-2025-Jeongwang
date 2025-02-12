@@ -6,7 +6,12 @@ public class Player : MonoBehaviour
 {
     private Rigidbody2D myrigid;
     private Animator myAnimator;
+    private AudioSource myAudioSource;
     public float power;
+
+    public AudioClip jumpSound;     // 점프시작
+    public AudioClip groundSound;   // land (착지)
+    public AudioClip hitSound;	    // 박스와 충돌
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +21,8 @@ public class Player : MonoBehaviour
         if (myAnimator == null) Debug.Log("Player.cs : Animator is not found");
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         if (gameManager == null) Debug.Log("Player.cs : GameManager is not found");
+        myAudioSource = GetComponent<AudioSource>();
+        if (myAudioSource == null) Debug.Log("Player.cs : AudioSource is not found");
     }
 
     public void Jump()
@@ -25,6 +32,7 @@ public class Player : MonoBehaviour
 
         myrigid.AddForce(Vector2.up * power, ForceMode2D.Impulse);
         myAnimator.SetBool("isJump", true);
+        myAudioSource.PlayOneShot(jumpSound);
     }
 
     // Update is called once per frame
@@ -36,11 +44,13 @@ public class Player : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         myAnimator.SetBool("isJump", false);
+        myAudioSource.PlayOneShot(groundSound);
     }
 
     private GameManager gameManager;
     private void OnTriggerEnter2D(Collider2D other)
     {
+        myAudioSource.PlayOneShot(hitSound);
         gameManager.GameOver();
     }
 }
