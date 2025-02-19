@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 30885056}
   - component: {fileID: 30885055}
   - component: {fileID: 30885054}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 3
+  normalLaserCoolTime: 0.2
 --- !u!58 &30885055
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -421,6 +422,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 079200bad3581554f9567f8fcd46e9fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemySpawnCoolTime: 3
 --- !u!82 &1861999999
 AudioSource:
   m_ObjectHideFlags: 0

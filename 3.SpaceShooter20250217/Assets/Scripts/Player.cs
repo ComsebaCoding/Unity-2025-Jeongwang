@@ -6,10 +6,17 @@ public class Player : MonoBehaviour
 {
     Vector2 direction;
     public float speed = 3.0f;
+    int hp = 5;
+
+    private GameObject NormalLaserPrepab;       // 평타 투사체 프리팹
+    float normalShootTimer = 0.0f;              // 투사체 발사 타이머
+    public float normalLaserCoolTime = 0.2f;    // 투사체 발사 쿨타임
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        NormalLaserPrepab = Resources.Load<GameObject>("Prefabs/NormalLaser_Player");
+        if (NormalLaserPrepab == null) Debug.Log("Player.cs : Prefabs/NormalLaser_Player is Not Found.");
     }
 
     // Update is called once per frame
@@ -56,5 +63,20 @@ public class Player : MonoBehaviour
         }
         // 플레이어 위쪽 방향으로 이동
         transform.Translate(Vector2.up * speed * Time.deltaTime, Space.Self);
+        
+        normalShootTimer += Time.deltaTime;
+        if (Input.GetKey(KeyCode.Space) && normalShootTimer >= normalLaserCoolTime)            
+        {
+            normalShootTimer = 0.0f;
+            
+            // 플레이어 위치에 바로 투사체 생성
+            Instantiate(NormalLaserPrepab, transform.position, transform.rotation);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        --hp;
+        // TODO : 체력이 0이 되면 게임오버 처리
     }
 }
