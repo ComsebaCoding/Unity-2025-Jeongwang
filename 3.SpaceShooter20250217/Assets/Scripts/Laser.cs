@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NormalLaser : MonoBehaviour
+public class Laser : MonoBehaviour
 {
     public float LaserSpeed = 5.0f;
     public int AttackDamage = 1;

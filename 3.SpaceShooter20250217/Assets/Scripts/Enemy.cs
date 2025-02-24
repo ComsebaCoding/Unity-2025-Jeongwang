@@ -24,7 +24,11 @@ abstract public class Enemy : MonoBehaviour
     // 데미지 처리
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        --hp;
+        Laser laser = collision.gameObject.GetComponent<Laser>();
+        if (laser)
+        {
+            hp -= laser.AttackDamage;
+        }
         if (hp <= 0)
         {
             OnDead(); // 추상 함수이므로 자식이 구현해줘서 자식 별로 다른 Dead Action 발동!
