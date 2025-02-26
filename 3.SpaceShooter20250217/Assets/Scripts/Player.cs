@@ -12,11 +12,23 @@ public class Player : MonoBehaviour
     float normalShootTimer = 0.0f;              // 투사체 발사 타이머
     public float normalLaserCoolTime = 0.2f;    // 투사체 발사 쿨타임
 
+    private SpriteRenderer DamageRenderer;
+    public List<Sprite> damageSpriteList = new List<Sprite>(); // ls = []
+
+    private Animator myAnimator;
+
     // Start is called before the first frame update
     void Start()
     {
         NormalLaserPrepab = Resources.Load<GameObject>("Prefabs/NormalLaser_Player");
         if (NormalLaserPrepab == null) Debug.Log("Player.cs : Prefabs/NormalLaser_Player is Not Found.");
+
+        myAnimator = GetComponent<Animator>();
+        if (myAnimator == null) Debug.Log("Player.cs/Start() : Animator is Not Found.");
+
+        DamageRenderer = transform.Find("Damaged").GetComponent<SpriteRenderer>();
+        if (DamageRenderer == null) Debug.Log("Player.cs/Start() : DamageRenderer is Not Found.");
+        else DamageRenderer.sprite = damageSpriteList[hp];
     }
 
     // Update is called once per frame
@@ -37,7 +49,7 @@ public class Player : MonoBehaviour
         // Vector2.Lerp(벡터1, 벡터2, 보간값) // 보간값을 기준으로 벡터1, 벡터2를 보간
         // Vector2.Reflect(방향벡터, 법선벡터) // 법선벡터 : 내가 반사시키려는 표면에 수직 방향인 벡터
         // 방향 벡터를 법선 벡터 기준으로 반사 시켰을때 나오는 반사된 벡터를 반환
-        
+
         // 입력이 존재할 경우에만 이동
         if (direction.sqrMagnitude > 0.1f)
         {
@@ -46,7 +58,7 @@ public class Player : MonoBehaviour
             // 내가 가고자 하는 각도 = Up벡터와 direction 사이의 각도
             // Vector2.SignedAngle(벡터1, 벡터2) 함수는 두 벡터 사이의 각도를 return 
             float targetAngle = Vector2.SignedAngle(Vector2.up, direction);
-            
+
             // 현재 속도를 저장
             float curVelocity = 0.0f;
             // 현재 각도를 부드럽게 회전한 각도를 구하는 함수
@@ -63,12 +75,13 @@ public class Player : MonoBehaviour
         }
         // 플레이어 위쪽 방향으로 이동
         transform.Translate(Vector2.up * speed * Time.deltaTime, Space.Self);
-        
+
         normalShootTimer += Time.deltaTime;
-        if (Input.GetKey(KeyCode.Space) && normalShootTimer >= normalLaserCoolTime)            
+        if (Input.GetKey(KeyCode.Space) && normalShootTimer >= normalLaserCoolTime)
         {
             normalShootTimer = 0.0f;
-            
+
+            GameManager.instance.PlayShotSound();
             // 플레이어 위치에 바로 투사체 생성
             Instantiate(NormalLaserPrepab, transform.position, transform.rotation);
         }
@@ -76,7 +89,22 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        --hp;
+        if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("EnemyAttack"))
+        {
+            DamageRenderer.sprite = damageSpriteList[--hp];
+            GameManager.instance.PlayHitSound();
+        }
         // TODO : 체력이 0이 되면 게임오버 처리
+        if (hp <= 0)
+        {
+            myAnimator.SetBool("isDead", true);
+            GameManager.instance.PlayDestroySound();
+        }
+    }
+
+    public void OnDead()
+    {
+        // TODO : 게임오버 처리
+        GameManager.instance.GameOver();
     }
 }

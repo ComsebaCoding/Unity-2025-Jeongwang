@@ -7,6 +7,7 @@ using UnityEngine;
 abstract public class Enemy : MonoBehaviour
 {
     public int hp;
+    protected bool outMapFlag = false;
     // virtual 키워드는 가상 함수를 만드는 키워드이다.
     // 가상 함수는 내가 자식에게 상속 시켰을 때 자식이 새로 정의해서 기능을 변경할 수 있다.
     // Update is called once per frame
@@ -16,8 +17,9 @@ abstract public class Enemy : MonoBehaviour
         if (transform.position.magnitude > 15.0f)
         {
             // 화면 중심으로부터 15보다 멀어지면 본인 오브젝트를 제거.
-            Destroy(gameObject);
             // 오브젝트 풀링 구현할 때 디스트로이를 변경할 예정
+            outMapFlag = true;
+            OnDead();
         }
     }
 
@@ -32,7 +34,8 @@ abstract public class Enemy : MonoBehaviour
         if (hp <= 0)
         {
             OnDead(); // 추상 함수이므로 자식이 구현해줘서 자식 별로 다른 Dead Action 발동!
-            Destroy(gameObject);
+            //Destroy(gameObject);
+            // 오브젝트 풀링 때문에 이제 Destroy를 각 자식이 풀링해서 담아줘야 한다
         }
     }
 
